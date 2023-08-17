@@ -3,9 +3,34 @@
   "version": "1.0.0",
   "description": "Tim's game for the js13k games competition (js13kgames.com)",
   "main": "index.js",
-  "scripts": {
-    "start": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Tim West (timothy.k.west@gmail.com)",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "npx vite",
+    "build": "cross-env LEVEL_2_BUILD=true vite build",
+    "find-best-roadroller": "node find-best-roadroller.js",
+    "build-with-best-roadroller": "cross-env USE_RR_CONFIG=true vite build",
+    "lint": "eslint --ext .js --ignore-path .gitignore src",
+    "vite": "vite serve"
+  },
+  "dependencies": {
+    "kontra": "^9.0.0"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.1",
+    "copy-webpack-plugin": "^9.0.1",
+    "cross-env": "^7.0.3",
+    "ect-bin": "1.4.1",
+    "eslint": "^8.34.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "google-closure-compiler": "^20230206.0.0",
+    "html-minifier": "^4.0.0",
+    "html-webpack-plugin": "^5.3.2",
+    "roadroller": "^2.1.0",
+    "tmp": "^0.2.1",
+    "vite": "^4.4.9",
+    "webpack": "^5.50.0",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.0.0"
+  }
 }
