@@ -1,0 +1,11 @@
+{
+  "name": "kings-quarters",
+  "version": "1.0.0",
+  "description": "Tim's game for the js13k games competition (js13kgames.com)",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tim West (timothy.k.west@gmail.com)",
+  "license": "MIT"
+}
