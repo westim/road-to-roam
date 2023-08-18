@@ -5,22 +5,26 @@
     <link rel="shortcut icon" href="about:blank">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
-  </head>
-  <body>
     <style>
+        body {
+            background: #000;
+        }
       canvas { 
               position: absolute;
               left: 50%;
               top: 50%;
               transform: translate(-50%, -50%);
-              height: 50vh;
-              width: 50vw;
-              border: black 3px solid;
+              height: 90vh;
+              max-width: 90vw;
+              aspect-ratio: 16/9;
+              border: white 2px solid;
+              image-rendering: pixelated;
       }
     </style>
-    <div id="app"></div>
-    <script type="module" src="/index.js"></script>
-    <canvas>
+  </head>
+  <body>
+    <canvas id="canvas">
+    <script type="module" src="/main.js"></script>
   </body>
 </html>
 
