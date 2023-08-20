@@ -8,8 +8,8 @@
   "scripts": {
     "start": "npx vite",
     "build": "cross-env LEVEL_2_BUILD=true vite build",
-    "find-best-roadroller": "node find-best-roadroller.js",
-    "build-with-best-roadroller": "cross-env USE_RR_CONFIG=true vite build",
+    "roadroller": "node find-best-roadroller.js",
+    "build:roadroller": "cross-env USE_RR_CONFIG=true vite build",
     "lint": "eslint --ext .js --ignore-path .gitignore src",
     "vite": "vite serve"
   },
