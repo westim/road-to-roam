@@ -9,7 +9,6 @@ import ect from 'ect-bin';
 
 const htmlMinify = require('html-minifier');
 const tmp = require('tmp');
-const ClosureCompiler = require('google-closure-compiler').compiler;
 
 export default defineConfig(({ command }) => {
   const config = {
@@ -25,10 +24,12 @@ export default defineConfig(({ command }) => {
   };
 
   if (command === 'build') {
-    config.esbuild = false;
     config.base = '';
+    config.esbuild = {
+        legalComments: 'none',
+        drop: ['console', 'debugger'],
+    };
     config.build = {
-      minify: false,
       target: 'es2020',
       modulePreload: { polyfill: false },
       assetsInlineLimit: 800,
@@ -41,48 +42,11 @@ export default defineConfig(({ command }) => {
         },
       }
     };
-    config.plugins = [closurePlugin(), roadrollerPlugin(), ectPlugin()];
+    config.plugins = [roadrollerPlugin(), ectPlugin()];
   }
 
   return config;
 });
-
-function closurePlugin() {
-  return {
-    name: 'closure-compiler',
-    renderChunk: applyClosure,
-    enforce: 'post',
-  }
-}
-
-async function applyClosure(js, chunk) {
-  const tmpobj = tmp.fileSync();
-  // replace all consts with lets to save about 50-70 bytes
-  js = js.replaceAll('const ', 'let ');
-
-  await fs.writeFile(tmpobj.name, js);
-  const closureCompiler = new ClosureCompiler({
-    js: tmpobj.name,
-    externs: 'externs.js',
-    compilation_level: 'ADVANCED',
-    warning_level: 'QUIET',
-    language_in: 'STABLE',
-    language_out: 'ECMASCRIPT_NEXT',
-  });
-  return new Promise((resolve, reject) => {
-    closureCompiler.run((_exitCode, stdOut, stdErr) => {
-      if (stdOut !== '') {
-        resolve({ code: stdOut });
-      } else if (stdErr !== '') { // only reject if stdout isn't generated
-        reject(stdErr);
-        return;
-      }
-
-      console.warn(stdErr); // If we make it here, there were warnings but no errors
-    });
-  })
-}
-
 
 function roadrollerPlugin() {
   return {

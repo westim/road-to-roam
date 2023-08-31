@@ -4,16 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="shortcut icon" href="about:blank">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arrows</title>
+    <title>Seafarer</title>
     <style>
-        body {
-            background: #000;
+        html, body {
+            background: #003;
+            margin: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
       canvas { 
-              position: absolute;
-              left: 50%;
-              top: 50%;
-              transform: translate(-50%, -50%);
+              background: #057;
               height: 90vh;
               max-width: 90vw;
               aspect-ratio: 16/9;
@@ -26,6 +28,7 @@
     <canvas id="canvas">
     <script type="module" src="/src/main.js"></script>
     <script type="module" src="/src/input.js"></script>
+    <script type="module" src="/src/song.js"></script>
   </body>
 </html>
 
