@@ -1,5 +1,5 @@
 {
-  "name": "kings-quarters",
+  "name": "seafarer",
   "version": "1.0.0",
   "description": "Tim's game for the js13k games competition (js13kgames.com)",
   "main": "index.js",
@@ -27,6 +27,7 @@
     "html-webpack-plugin": "^5.3.2",
     "roadroller": "^2.1.0",
     "tmp": "^0.2.1",
+    "typescript": "^5.2.2",
     "vite": "^4.4.9",
     "webpack": "^5.50.0",
     "webpack-cli": "^4.8.0",

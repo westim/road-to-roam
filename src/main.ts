@@ -1,14 +1,18 @@
-import { init, Sprite, GameLoop, Text, onInput } from 'kontra';
+import { init, Sprite, GameLoop, Text, getCanvas } from 'kontra';
 import { gameState } from './gameState';
+import { randInt } from './util';
+import { createPause } from './pause';
+import { initInputs } from './input';
+import { createPointer, pointerToDirection } from './pointer';
 
 let { canvas } = init();
-let { clientWidth, clientHeight } = document.getElementById('canvas');
+let { clientWidth, clientHeight } = getCanvas() as HTMLCanvasElement;
 canvas.width = clientWidth;
 canvas.height = clientHeight;
 
-let randInt = (min, max) => Math.random() * (max - min + 1) + min;
+createPointer(gameState, canvas);
 
-let sprites = [];
+let sprites = new Array<Sprite|Text>();
 let leftBound = canvas.width / 32;
 let rightBound = canvas.width - leftBound;
 let speed = canvas.height * -0.01;
@@ -36,13 +40,17 @@ let player = Sprite({
             this.x = rightBound;
             gameState.direction = 0;
         }
+
+        if (gameState.useMouse) {
+            pointerToDirection(gameState, this);
+        }
     }
 });
 sprites.push(player);
 
 let arrow = Sprite({
     type: 'arrow',
-    x: randInt(0, canvas.width),
+    x: randInt(canvas.width),
     y: canvas.height + 10,
     dy: speed,
     render() {
@@ -57,7 +65,7 @@ let arrow = Sprite({
     update() {
         if (arrow.y < -10) {
             arrow.y = canvas.height;
-            arrow.x = randInt(5, canvas.width - 5);
+            arrow.x = 10 + randInt(canvas.width - 20);
         }
         this.advance();
     }
@@ -79,6 +87,8 @@ let score = Text({
 });
 sprites.push(score);
 
+let pause = createPause(canvas, accentColor);
+
 let loop = GameLoop({
     blur: true,
     update: () => {
@@ -88,25 +98,8 @@ let loop = GameLoop({
         sprites.forEach(s => s.render());
     }
 });
+initInputs(gameState, loop, canvas, pause);
+
 loop.start();
 
-let pause = Text({
-    text: 'paused',
-    font: `italic ${canvas.height / 20}px Arial`,
-    color: accentColor,
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-});
-
-onInput(['esc', 'start'], () => {
-    if (loop.isStopped) {
-        loop.start();
-        canvas.style.background = '#057';
-    }
-    else {
-        loop.stop();
-        canvas.style.background = '#003';
-        pause.render();
-    }
-});
 
