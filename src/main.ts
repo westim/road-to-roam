@@ -1,8 +1,10 @@
-import { init, Sprite, GameLoop, Text, getCanvas, randInt, collides } from 'kontra';
+import { init, Sprite, GameLoop, Text, track, getCanvas, randInt, collides } from 'kontra';
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
 import { createPointer, pointerToDirection } from './pointer';
+import { audio } from './song';
+import { saveScore, loadScore } from './storage';
 
 let { canvas } = init();
 let { clientWidth, clientHeight } = getCanvas() as HTMLCanvasElement;
@@ -10,13 +12,14 @@ canvas.width = clientWidth;
 canvas.height = clientHeight;
 let speedXScale = canvas.width / 400;
 let speedYScale = canvas.height / 400;
+let bestScore = loadScore();
 
 createPointer(gameState, canvas);
 
 let sprites = new Array<Sprite | Text>();
 let leftBound = canvas.width / 32;
 let rightBound = canvas.width - leftBound;
-let accentColor = '#FFF';
+let accentColor = 'white';
 
 let player = Sprite({
     type: 'player',
@@ -39,10 +42,49 @@ let player = Sprite({
 });
 sprites.push(player);
 
-function createHeart(x: number): Sprite {
+let mute = Sprite({
+    x: 30,
+    y: canvas.height - 30,
+    height: 40,
+    width: 40,
+    anchor: { x: 0.5, y: 0.5 },
+    render() {
+        this.context.fillStyle = accentColor;
+        this.context.beginPath();
+        this.context.moveTo(0, 0);
+        this.context.lineTo(0, this.height);
+        this.context.lineTo(this.width * 0.6, this.height * 0.6);
+        this.context.lineTo(this.width, this.height * 0.6);
+        this.context.lineTo(this.width, this.height * 0.4);
+        this.context.lineTo(this.width * 0.6, this.height * 0.4);
+        this.context.lineTo(0, 0);
+        this.context.closePath();
+        this.context.fill();
+
+        if (gameState.muted) {
+            this.context.strokeStyle = 'red';
+            this.context.lineWidth = 3;
+            this.context.beginPath();
+            this.context.moveTo(this.width * 0.8, this.height + 3);
+            this.context.lineTo(this.width * 0.2, -3);
+            this.context.stroke();
+        }
+    },
+    onDown() {
+        gameState.muted = !gameState.muted;
+        if (gameState.muted) {
+            audio.pause();
+        }
+        else {
+            audio.play();
+        }
+    },
+});
+track(mute);
+
+function createHeart(): Sprite {
     return Sprite({
         type: 'heart',
-        x: x,
         y: 20,
         render() {
             this.context.strokeStyle = accentColor;
@@ -56,10 +98,8 @@ function createHeart(x: number): Sprite {
         },
     });
 }
-
-let hearts = new Array(gameState.life).fill(undefined).map(_ => createHeart(canvas.width - 20));
-hearts.forEach((heart, i) => heart.x -= i * 30);
-sprites.push(...hearts);
+let hearts = Array.from({ length: gameState.life }, () => createHeart());
+hearts.forEach((heart, i) => heart.x = canvas.width - (i + 1) * 30);
 
 let arrow = Sprite({
     type: 'arrow',
@@ -70,7 +110,6 @@ let arrow = Sprite({
     reset() {
         arrow.y = canvas.height;
         arrow.x = randInt(10, canvas.width);
-
     },
     render() {
         this.context.strokeStyle = accentColor;
@@ -94,15 +133,14 @@ sprites.push(arrow);
 
 let score = Text({
     text: '',
-    font: `${canvas.height / 20}px Courier New`,
+    font: `${canvas.height / 28}px Courier New`,
     color: accentColor,
     x: 20,
     y: 20,
     value: 0,
     update() {
         score.value += -gameState.speedY / 100;
-        score.text = `Distance: ${score.value.toFixed(1)} m`;
-        this.advance();
+        score.text = `Distance: ${score.value.toFixed(1)} m (Best: ${Math.max(score.value, bestScore).toFixed(1)} m)`;
     }
 });
 sprites.push(score);
@@ -115,15 +153,18 @@ let loop = GameLoop({
         if (collides(player, arrow)) {
             arrow.reset();
             gameState.life--;
-            let idx = sprites.findLastIndex((el: Sprite) => el.type === 'heart');
-            if (idx >= 0) {
-                sprites.splice(idx, 1);
+            hearts.pop();
+
+            if (gameState.life === 0) {
+                saveScore(Math.max(score.value, bestScore));
             }
         }
         sprites.forEach(s => s.update());
     },
     render: () => {
         sprites.forEach(s => s.render());
+        hearts.forEach(s => s.render());
+        mute.render();
     }
 });
 

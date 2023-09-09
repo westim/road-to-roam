@@ -1,4 +1,5 @@
-import { CPlayer } from "./small-player";
+import { CPlayer } from './small-player';
+import { gameState } from './gameState';
 // This music has been exported by SoundBox. You can use it with
 // http://sb.bitsnbites.eu/player-small.js in your own product.
 
@@ -423,22 +424,22 @@ var song = {
     numChannels: 6  // Number of channels
 };
 
-var player = new CPlayer();
+let player = new CPlayer();
+export let audio = document.createElement("audio");
 player.init(song);
 
 // Generate music...
-var done = false;
+let ready = false;
 setInterval(function() {
-    if (done) {
+    if (ready) {
         return;
     }
 
-    done = player.generate() >= 1;
+    ready = player.generate() >= 1;
 
-    if (done) {
+    if (ready) {
         // Put the generated song in an Audio element.
         var wave = player.createWave();
-        var audio = document.createElement("audio");
         audio.src = URL.createObjectURL(new Blob([wave], { type: "audio/wav" }));
         audio.loop = true;
         audio.play();
