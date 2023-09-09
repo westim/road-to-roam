@@ -5,12 +5,12 @@ export function initInputs(gameState: GameState, gameLoop: GameLoop, canvas: HTM
     initInput();
 
     onInput(['arrowleft', 'dpadleft'], () => {
-        gameState.direction = Math.max(gameState.direction - 1, -3);
+        gameState.direction = Math.max(gameState.direction - 1, -2);
         gameState.useMouse = false;
     });
 
     onInput(['arrowright', 'dpadright'], () => {
-        gameState.direction = Math.min(gameState.direction + 1, 3);
+        gameState.direction = Math.min(gameState.direction + 1, 2);
         gameState.useMouse = false;
     });
 

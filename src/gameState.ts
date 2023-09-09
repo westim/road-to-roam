@@ -1,12 +1,16 @@
 export interface GameState {
     direction: number;
-    playerPosition: number[];
+    speedX: number;
+    speedY: number;
+    life: number;
     useMouse: boolean;
 }
 
 export let gameState: GameState = {
     direction: 0,
-    playerPosition: [0, 0],
+    speedX: 0,
+    speedY: 0,
+    life: 3,
     useMouse: false
 };
 
