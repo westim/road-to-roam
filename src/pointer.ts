@@ -24,7 +24,7 @@ export function pointerToDirection(gameState: GameState, player: Sprite): void {
     else if (angle <= 0.8) {
         gameState.direction = 1;
     }
-    else if (angle <= 1.2) {
+    else {
         gameState.direction = 2;
     }
     if (pointerX < playerX) {
