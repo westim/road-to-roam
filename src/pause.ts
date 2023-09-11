@@ -5,6 +5,7 @@ export function createPause(canvas: HTMLCanvasElement, accentColor: string): Tex
         text: 'paused',
         font: `italic ${canvas.height / 20}px Arial`,
         color: accentColor,
+        anchor: { x: 0.5, y: 0.5 },
         x: canvas.width / 2,
         y: canvas.height / 2,
     });

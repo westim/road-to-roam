@@ -91,7 +91,7 @@ function obstacle(): Sprite {
         height: 10,
         width: 10,
         init() {
-            this.x = randInt(-canvas.width * 0.25, canvas.width * 1.25);
+            this.x = randInt(-canvas.width * 0.5, canvas.width * 1.5);
             this.y = canvas.height * 1.1;
             this.kill = false;
         },
@@ -115,10 +115,49 @@ function obstacle(): Sprite {
     });
 }
 
+function arrow(): Sprite {
+    let obj = obstacle();
+    obj.update = function() {
+        this.dx = gameState.speedX;
+        this.dy = gameState.speedY * 1.5;
+        this.advance();
+    }
+    return obj;
+}
+
+function cart(): Sprite {
+    let obj = obstacle();
+    let sideFactor = Math.random() < 0.5 ? -1 : 1;
+    obj.update = function() {
+        this.dx = gameState.speedX + speedXScale * 1.8 * sideFactor;
+        this.dy = gameState.speedY * 0.8;
+        this.advance();
+    }
+    obj.init = function() {
+        this.x = canvas.width * 0.5 + canvas.width * (Math.random() + 0.5) * -sideFactor;
+        this.y = canvas.height * 1.1;
+        this.kill = false;
+    }
+    return obj;
+}
+
+function randomObstacle(): Sprite {
+    let weight = randInt(1, 10);
+    if (weight <= 6) {
+        return obstacle();
+    }
+    else if (weight <= 9) {
+        return arrow();
+    }
+    else {
+        return cart();
+    }
+}
+
 let obstacles = Pool({
     // @ts-ignore
-    create: obstacle,
-    maxSize: 5,
+    create: randomObstacle,
+    maxSize: 50,
 });
 
 let score = Text({
@@ -141,7 +180,7 @@ let loop = GameLoop({
         gameState.speedY = (Math.abs(gameState.direction) - 3) * speedYScale;
         gameState.speedX = -gameState.direction * speedXScale;
         let alive = obstacles.getAliveObjects() as Sprite[];
-        let obj: Sprite|undefined;
+        let obj: Sprite | undefined;
         if (obj = alive.find(ob => collides(player, ob))) {
             obj.kill = true;
             gameState.life--;
@@ -166,7 +205,7 @@ let loop = GameLoop({
 
 (function spawn() {
     obstacles.get();
-    setTimeout(spawn, Math.random() * 1_000 + 200);
+    setTimeout(spawn, Math.max(0, Math.random() * 500 + 100 - score.value));
 })();
 
 let pause = createPause(canvas, accentColor);
