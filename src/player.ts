@@ -1,25 +1,29 @@
-import { Sprite } from 'kontra';
+import { Sprite, SpriteSheet } from 'kontra';
 import { GameState } from './gameState';
-import { pointerToDirection } from './pointer';
 
 export function createPlayer(canvas: HTMLCanvasElement, gameState: GameState, accentColor: string): Sprite {
-    return Sprite({
-        type: 'player',
-        x: canvas.width / 2,
-        y: canvas.height / 4,
-        radius: canvas.width / 64,
-        height: canvas.width / 32,
-        width: canvas.width / 32,
-        render() {
-            this.context.strokeStyle = accentColor;
-            this.context.beginPath();
-            this.context.arc(0, 0, this.radius, 0, Math.PI * 2);
-            this.context.stroke();
-        },
-        update() {
-            if (gameState.useMouse) {
-                pointerToDirection(gameState, this);
+    let img = new Image();
+    img.src = '../assets/frontpng.png';
+    let sheet = SpriteSheet({
+        image: img,
+        frameWidth: 26,
+        frameHeight: 63,
+        animations: {
+            idle: {
+                frames: '0..1',
+                frameRate: 4
             }
         }
     });
+
+    let player = Sprite({
+        type: 'player',
+        anchor: { x: 0.5, y: 0.5 },
+        x: canvas.width / 2,
+        y: canvas.height / 4,
+        animations: sheet.animations,
+    });
+    player.setScale(3);
+    return player;
 }
+

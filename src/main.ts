@@ -2,7 +2,7 @@ import { init, Sprite, GameLoop, Text, Pool, track, getCanvas, collides } from '
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
-import { createPointer } from './pointer';
+import { createPointer, pointerToDirection } from './pointer';
 import { audio } from './song';
 import { saveScore, loadScore } from './storage';
 import { createHeart } from './heart';
@@ -30,8 +30,8 @@ let accentColor = 'white';
 
 let player = createPlayer(canvas, gameState, accentColor);
 let mute = createMute(canvas, gameState, audio, accentColor);
-let hearts = Array.from({ length: gameState.life }, () => createHeart());
-hearts.forEach((heart, i) => heart.x = canvas.width - (i + 1) * heart.world.width);
+let hearts = Array.from({ length: gameState.life }, () => createHeart(canvas));
+hearts.forEach((heart, i) => heart.x = canvas.width - (i + 2) * heart.world.width);
 
 let obstacles = Pool({
     // @ts-ignore
@@ -48,6 +48,7 @@ let loop = GameLoop({
         gameState.speed.x = -gameState.direction * canvas.width;
         gameState.speed.y = (Math.abs(gameState.direction) - 3) * canvas.height;
         gameState.speed = gameState.speed.normalize().scale(5);
+        pointerToDirection(gameState, player);
         let alive = obstacles.getAliveObjects() as Sprite[];
         let obj: Sprite | undefined;
         if (obj = alive.find(ob => collides(player, ob))) {

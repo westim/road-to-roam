@@ -1,15 +1,15 @@
 import { Sprite } from "kontra";
 
-export function createHeart(): Sprite {
+export function createHeart(canvas: HTMLCanvasElement): Sprite {
     let img = new Image();
     img.src = '../assets/heart.webp';
-    return Sprite({
+    let heart =  Sprite({
         type: 'heart',
-        y: 40,
         anchor: { x: 0.5, y: 0.5 },
-        scaleX: 4,
-        scaleY: 4,
         image: img,
     });
+    heart.setScale(canvas.width * 0.003);
+    heart.y = heart.world.height;
+    return heart;
 }
 

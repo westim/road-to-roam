@@ -28,7 +28,7 @@ export function createObstacle(canvas: HTMLCanvasElement, gameState: GameState, 
             this.advance();
         },
         isAlive() {
-            return !this.kill && this.y > -10;
+            return !this.kill && this.y > -this.world.height;
         }
     });
 }
