@@ -1,18 +1,22 @@
+import { Vector } from 'kontra';
+
 export interface GameState {
     direction: number;
-    speedX: number;
-    speedY: number;
+    speed: Vector;
     life: number;
     muted: boolean;
+    end: boolean;
     useMouse: boolean;
+    spawnCounter: number;
 }
 
 export let gameState: GameState = {
     direction: 0,
-    speedX: 0,
-    speedY: 0,
+    speed: Vector(0, 1),
     life: 3,
     muted: false,
-    useMouse: false
+    end: false,
+    useMouse: false,
+    spawnCounter: 0,
 };
 

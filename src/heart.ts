@@ -1,19 +1,15 @@
 import { Sprite } from "kontra";
 
-export function createHeart(accentColor: string): Sprite {
+export function createHeart(): Sprite {
+    let img = new Image();
+    img.src = '../assets/heart.webp';
     return Sprite({
         type: 'heart',
-        y: 20,
-        render() {
-            this.context.strokeStyle = accentColor;
-            this.context.beginPath();
-            this.context.moveTo(-10, -10);
-            this.context.lineTo(10, -10);
-            this.context.lineTo(10, 10);
-            this.context.lineTo(-10, 10);
-            this.context.closePath();
-            this.context.stroke();
-        },
+        y: 40,
+        anchor: { x: 0.5, y: 0.5 },
+        scaleX: 4,
+        scaleY: 4,
+        image: img,
     });
 }
 

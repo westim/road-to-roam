@@ -20,6 +20,10 @@ export function initInputs(gameState: GameState, gameLoop: GameLoop, canvas: HTM
     });
 
     onInput(['esc', 'start'], () => {
+        if (gameState.end) {
+            return;
+        }
+
         if (gameLoop.isStopped) {
             gameLoop.start();
             canvas.style.background = '#057';
@@ -28,6 +32,12 @@ export function initInputs(gameState: GameState, gameLoop: GameLoop, canvas: HTM
             gameLoop.stop();
             canvas.style.background = '#003';
             pause.render();
+        }
+    });
+
+    onInput(['down'], () => {
+        if (gameState.end) {
+            location.reload();
         }
     });
 }

@@ -1,184 +1,53 @@
-import { init, GameObject, Sprite, GameLoop, Text, Pool, track, getCanvas, randInt, collides } from 'kontra';
+import { init, Sprite, GameLoop, Text, Pool, track, getCanvas, collides } from 'kontra';
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
-import { createPointer, pointerToDirection } from './pointer';
+import { createPointer } from './pointer';
 import { audio } from './song';
 import { saveScore, loadScore } from './storage';
 import { createHeart } from './heart';
+import { createEnd } from './end';
+import { createPlayer } from './player';
+import { createMute } from './mute';
+import { createScore } from './score';
+import { randomObstacle } from './randomObstacle';
 
 let { canvas } = init();
-let { clientWidth, clientHeight } = getCanvas() as HTMLCanvasElement;
-canvas.width = clientWidth;
-canvas.height = clientHeight;
-let speedXScale = canvas.width / 400;
-let speedYScale = canvas.height / 400;
+({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
+window.addEventListener("resize", function() {
+    ({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
+});
+
+let speedScale = 0.002;
+gameState.speed.x = canvas.width * speedScale;
+gameState.speed.y = canvas.height * speedScale;
 let bestScore = loadScore();
 
 createPointer(gameState, canvas);
 
 let ui = new Array<Text>();
-let leftBound = canvas.width / 32;
-let rightBound = canvas.width - leftBound;
 let accentColor = 'white';
 
-let player = Sprite({
-    type: 'player',
-    x: canvas.width / 2,
-    y: canvas.height / 4,
-    radius: canvas.width / 64,
-    height: canvas.width / 32,
-    width: canvas.width / 32,
-    render() {
-        this.context.strokeStyle = accentColor;
-        this.context.beginPath();
-        this.context.arc(0, 0, this.radius, 0, Math.PI * 2);
-        this.context.stroke();
-    },
-    update() {
-        if (gameState.useMouse) {
-            pointerToDirection(gameState, this);
-        }
-    }
-});
-
-let mute = Sprite({
-    x: 30,
-    y: canvas.height - 30,
-    height: 40,
-    width: 40,
-    anchor: { x: 0.5, y: 0.5 },
-    render() {
-        this.context.fillStyle = accentColor;
-        this.context.beginPath();
-        this.context.moveTo(0, 0);
-        this.context.lineTo(0, this.height);
-        this.context.lineTo(this.width * 0.6, this.height * 0.6);
-        this.context.lineTo(this.width, this.height * 0.6);
-        this.context.lineTo(this.width, this.height * 0.4);
-        this.context.lineTo(this.width * 0.6, this.height * 0.4);
-        this.context.lineTo(0, 0);
-        this.context.closePath();
-        this.context.fill();
-
-        if (gameState.muted) {
-            this.context.strokeStyle = 'red';
-            this.context.lineWidth = 3;
-            this.context.beginPath();
-            this.context.moveTo(this.width * 0.8, this.height + 3);
-            this.context.lineTo(this.width * 0.2, -3);
-            this.context.stroke();
-        }
-    },
-    onDown() {
-        gameState.muted = !gameState.muted;
-        if (gameState.muted) {
-            audio.pause();
-        }
-        else {
-            audio.play();
-        }
-    },
-});
-track(mute);
-
-let hearts = Array.from({ length: gameState.life }, () => createHeart(accentColor));
-hearts.forEach((heart, i) => heart.x = canvas.width - (i + 1) * 30);
-
-function obstacle(): Sprite {
-    return Sprite({
-        type: 'obstacle',
-        height: 10,
-        width: 10,
-        init() {
-            this.x = randInt(-canvas.width * 0.5, canvas.width * 1.5);
-            this.y = canvas.height * 1.1;
-            this.kill = false;
-        },
-        render() {
-            this.context.strokeStyle = accentColor;
-            this.context.beginPath();
-            this.context.moveTo(-5, 5);
-            this.context.lineTo(0, -5);
-            this.context.lineTo(5, 5);
-            this.context.closePath();
-            this.context.stroke();
-        },
-        update() {
-            this.dx = gameState.speedX;
-            this.dy = gameState.speedY;
-            this.advance();
-        },
-        isAlive() {
-            return !this.kill && this.y > -10;
-        }
-    });
-}
-
-function arrow(): Sprite {
-    let obj = obstacle();
-    obj.update = function() {
-        this.dx = gameState.speedX;
-        this.dy = gameState.speedY * 1.5;
-        this.advance();
-    }
-    return obj;
-}
-
-function cart(): Sprite {
-    let obj = obstacle();
-    let sideFactor = Math.random() < 0.5 ? -1 : 1;
-    obj.update = function() {
-        this.dx = gameState.speedX + speedXScale * 1.8 * sideFactor;
-        this.dy = gameState.speedY * 0.8;
-        this.advance();
-    }
-    obj.init = function() {
-        this.x = canvas.width * 0.5 + canvas.width * (Math.random() + 0.5) * -sideFactor;
-        this.y = canvas.height * 1.1;
-        this.kill = false;
-    }
-    return obj;
-}
-
-function randomObstacle(): Sprite {
-    let weight = randInt(1, 10);
-    if (weight <= 6) {
-        return obstacle();
-    }
-    else if (weight <= 9) {
-        return arrow();
-    }
-    else {
-        return cart();
-    }
-}
+let player = createPlayer(canvas, gameState, accentColor);
+let mute = createMute(canvas, gameState, audio, accentColor);
+let hearts = Array.from({ length: gameState.life }, () => createHeart());
+hearts.forEach((heart, i) => heart.x = canvas.width - (i + 1) * heart.world.width);
 
 let obstacles = Pool({
     // @ts-ignore
-    create: randomObstacle,
+    create: () => randomObstacle(canvas, gameState, accentColor),
     maxSize: 50,
 });
 
-let score = Text({
-    text: '',
-    font: `${canvas.height / 28}px Courier New`,
-    color: accentColor,
-    x: 20,
-    y: 20,
-    value: 0,
-    update() {
-        score.value += -gameState.speedY / 100;
-        score.text = `Distance: ${score.value.toFixed(1)} m (Best: ${Math.max(score.value, bestScore).toFixed(1)} m)`;
-    }
-});
+let score = createScore(canvas, gameState, bestScore, accentColor);
 ui.push(score);
 
 let loop = GameLoop({
     blur: true,
-    update: () => {
-        gameState.speedY = (Math.abs(gameState.direction) - 3) * speedYScale;
-        gameState.speedX = -gameState.direction * speedXScale;
+    update: (dt: number) => {
+        gameState.speed.x = -gameState.direction * canvas.width;
+        gameState.speed.y = (Math.abs(gameState.direction) - 3) * canvas.height;
+        gameState.speed = gameState.speed.normalize().scale(5);
         let alive = obstacles.getAliveObjects() as Sprite[];
         let obj: Sprite | undefined;
         if (obj = alive.find(ob => collides(player, ob))) {
@@ -188,11 +57,22 @@ let loop = GameLoop({
 
             if (gameState.life === 0) {
                 saveScore(Math.max(score.value, bestScore));
+                let end = createEnd(canvas, accentColor);
+                track(end);
+                ui.push(end);
+                gameState.end = true;
+                loop.stop();
             }
         }
         obstacles.update();
         ui.forEach(s => s.update());
         player.update();
+
+        if (gameState.spawnCounter <= 0) {
+            obstacles.get();
+            gameState.spawnCounter = Math.random() * Math.max(0, (1 - score.value * 0.005));
+        }
+        gameState.spawnCounter -= dt;
     },
     render: () => {
         obstacles.render();
@@ -202,11 +82,6 @@ let loop = GameLoop({
         player.render();
     }
 });
-
-(function spawn() {
-    obstacles.get();
-    setTimeout(spawn, Math.max(0, Math.random() * 500 + 100 - score.value));
-})();
 
 let pause = createPause(canvas, accentColor);
 initInputs(gameState, loop, canvas, pause);
