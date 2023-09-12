@@ -30,7 +30,17 @@ export default defineConfig(({ command }) => {
         drop: ['console', 'debugger'],
     };
     config.build = {
-      target: 'es2020',
+      target: 'esnext',
+      minify: 'terser',
+      terserOptions: {
+        format: {
+          comments: false,
+        },
+        compress: {
+          toplevel: true,
+          passes: 3
+        }
+      },
       modulePreload: { polyfill: false },
       assetsInlineLimit: 800,
       assetsDir: '',

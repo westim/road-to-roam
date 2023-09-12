@@ -1,4 +1,4 @@
-import { init, Sprite, GameLoop, Text, Pool, track, getCanvas, collides } from 'kontra';
+import { init, Sprite, GameLoop, track, getCanvas, collides } from 'kontra';
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
@@ -11,12 +11,10 @@ import { createPlayer } from './player';
 import { createMute } from './mute';
 import { createScore } from './score';
 import { randomObstacle } from './randomObstacle';
+import { spawnTimer } from './util';
 
 let { canvas } = init();
 ({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
-window.addEventListener("resize", function() {
-    ({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
-});
 
 let speedScale = 0.002;
 gameState.speed.x = canvas.width * speedScale;
@@ -25,67 +23,61 @@ let bestScore = loadScore();
 
 createPointer(gameState, canvas);
 
-let ui = new Array<Text>();
-let accentColor = 'white';
-
-let player = createPlayer(canvas, gameState, accentColor);
-let mute = createMute(canvas, gameState, audio, accentColor);
-let hearts = Array.from({ length: gameState.life }, () => createHeart(canvas));
+// Top-level await makes asset loading way way less annoying
+let player = await createPlayer(canvas);
+let hearts = await Promise.all(Array.from({ length: gameState.life }, async () => await createHeart(canvas)));
 hearts.forEach((heart, i) => heart.x = canvas.width - (i + 2) * heart.world.width);
 
-let obstacles = Pool({
-    // @ts-ignore
-    create: () => randomObstacle(canvas, gameState, accentColor),
-    maxSize: 50,
-});
-
-let score = createScore(canvas, gameState, bestScore, accentColor);
-ui.push(score);
+let mute = createMute(canvas, gameState, audio);
+let score = createScore(canvas, gameState, bestScore);
+let ui = [mute, score];
+let obstacles: Sprite[];
 
 let loop = GameLoop({
     blur: true,
-    update: (dt: number) => {
+    update: async (dt: number) => {
+        pointerToDirection(gameState, player);
         gameState.speed.x = -gameState.direction * canvas.width;
         gameState.speed.y = (Math.abs(gameState.direction) - 3) * canvas.height;
         gameState.speed = gameState.speed.normalize().scale(5);
-        pointerToDirection(gameState, player);
-        let alive = obstacles.getAliveObjects() as Sprite[];
+        obstacles = obstacles.filter(ob => ob.isAlive());
         let obj: Sprite | undefined;
-        if (obj = alive.find(ob => collides(player, ob))) {
+        if (obj = obstacles.find(ob => collides(player, ob))) {
             obj.kill = true;
             gameState.life--;
             hearts.pop();
-
-            if (gameState.life === 0) {
-                saveScore(Math.max(score.value, bestScore));
-                let end = createEnd(canvas, accentColor);
-                track(end);
-                ui.push(end);
-                gameState.end = true;
-                loop.stop();
-            }
         }
-        obstacles.update();
+
+        if (gameState.life <= 0) {
+            saveScore(Math.max(score.value, bestScore));
+            let end = createEnd(canvas);
+            track(end);
+            ui.push(end);
+            gameState.end = true;
+            loop.stop();
+        }
+
+        obstacles.forEach(s => s.update());
         ui.forEach(s => s.update());
         player.update();
 
-        if (gameState.spawnCounter <= 0) {
-            obstacles.get();
-            gameState.spawnCounter = Math.random() * Math.max(0, (1 - score.value * 0.005));
-        }
+        // Spawn rates probably shouldn't be tied to framerate,
+        // but it's way easier than time-based spawning
         gameState.spawnCounter -= dt;
+        if (gameState.spawnCounter <= 0) {
+            obstacles.push(await randomObstacle(canvas, gameState));
+            gameState.spawnCounter = spawnTimer(score.value);
+        }
     },
     render: () => {
-        obstacles.render();
+        obstacles.forEach(s => s.render());
         hearts.forEach(s => s.render());
         ui.forEach(s => s.render());
-        mute.render();
         player.render();
     }
 });
 
-let pause = createPause(canvas, accentColor);
+let pause = createPause(canvas);
 initInputs(gameState, loop, canvas, pause);
 
 loop.start();
-

@@ -1,9 +1,8 @@
 import { Sprite, SpriteSheet } from 'kontra';
-import { GameState } from './gameState';
+import { loadImage } from './util';
 
-export function createPlayer(canvas: HTMLCanvasElement, gameState: GameState, accentColor: string): Sprite {
-    let img = new Image();
-    img.src = '../assets/frontpng.png';
+export async function createPlayer(canvas: HTMLCanvasElement): Promise<Sprite> {
+    let img = await loadImage('../assets/frontpng.png');
     let sheet = SpriteSheet({
         image: img,
         frameWidth: 26,

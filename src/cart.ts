@@ -2,8 +2,8 @@ import { Sprite } from 'kontra';
 import { GameState } from './gameState';
 import { createObstacle } from './obstacle';
 
-export function createCart(canvas: HTMLCanvasElement, gameState: GameState, accentColor: string): Sprite {
-    let obj = createObstacle(canvas, gameState, accentColor);
+export function createCart(canvas: HTMLCanvasElement, gameState: GameState): Sprite {
+    let obj = createObstacle(canvas, gameState);
     let sideFactor = Math.random() < 0.5 ? -1 : 1;
     obj.update = function() {
         this.dx = gameState.speed.x + sideFactor * gameState.speed.length();

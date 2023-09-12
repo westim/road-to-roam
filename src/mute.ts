@@ -1,7 +1,7 @@
 import { Sprite, track } from 'kontra';
 import { GameState } from './gameState';
 
-export function createMute(canvas: HTMLCanvasElement, gameState: GameState, audio: HTMLAudioElement, accentColor: string): Sprite {
+export function createMute(canvas: HTMLCanvasElement, gameState: GameState, audio: HTMLAudioElement): Sprite {
     let mute = Sprite({
         x: 30,
         y: canvas.height - 30,
@@ -9,7 +9,7 @@ export function createMute(canvas: HTMLCanvasElement, gameState: GameState, audi
         width: 40,
         anchor: { x: 0.5, y: 0.5 },
         render() {
-            this.context.fillStyle = accentColor;
+            this.context.fillStyle = 'white';
             this.context.beginPath();
             this.context.moveTo(0, 0);
             this.context.lineTo(0, this.height);

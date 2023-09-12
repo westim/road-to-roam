@@ -1,5 +1,5 @@
 {
-  "name": "seafarer",
+  "name": "js13k-road-to-rome",
   "version": "1.0.0",
   "description": "Tim's game for the js13k games competition (js13kgames.com)",
   "main": "index.js",
@@ -8,8 +8,8 @@
   "scripts": {
     "start": "npx vite",
     "build": "cross-env LEVEL_2_BUILD=true vite build",
-    "roadroller": "node find-best-roadroller.js",
     "build:roadroller": "cross-env USE_RR_CONFIG=true vite build",
+    "roadroller": "node find-best-roadroller.js",
     "lint": "eslint --ext .js --ignore-path .gitignore src",
     "vite": "vite serve"
   },
@@ -26,6 +26,7 @@
     "html-minifier": "^4.0.0",
     "html-webpack-plugin": "^5.3.2",
     "roadroller": "^2.1.0",
+    "terser": "^5.19.4",
     "tmp": "^0.2.1",
     "typescript": "latest",
     "vite": "^4.4.9",

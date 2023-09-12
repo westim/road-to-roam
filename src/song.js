@@ -1,5 +1,4 @@
 import { CPlayer } from './small-player';
-import { gameState } from './gameState';
 // This music has been exported by SoundBox. You can use it with
 // http://sb.bitsnbites.eu/player-small.js in your own product.
 

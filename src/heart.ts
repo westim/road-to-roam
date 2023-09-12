@@ -1,8 +1,8 @@
 import { Sprite } from "kontra";
+import { loadImage } from "./util";
 
-export function createHeart(canvas: HTMLCanvasElement): Sprite {
-    let img = new Image();
-    img.src = '../assets/heart.webp';
+export async function createHeart(canvas: HTMLCanvasElement): Promise<Sprite> {
+    let img = await loadImage('../assets/heart.webp');
     let heart =  Sprite({
         type: 'heart',
         anchor: { x: 0.5, y: 0.5 },

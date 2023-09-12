@@ -32,7 +32,7 @@
 //    or certain effects), you can reduce the size of the player routine even
 //    further by deleting the code.
 
-export let CPlayer = function() {
+export function CPlayer() {
 
     //--------------------------------------------------------------------------
     // Private methods
