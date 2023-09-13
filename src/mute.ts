@@ -36,7 +36,14 @@ export function createMute(canvas: HTMLCanvasElement, gameState: GameState, audi
                 audio.pause();
             }
             else {
-                audio.play();
+                let playPromise = audio.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                    })
+                        .catch(error => {
+                        });
+                }
             }
         },
     });

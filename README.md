@@ -18,3 +18,6 @@ Control options:
 
 - Arrow keys
 - Pointer tracking
+- Touch dragging
+
+The game is mobile-friendly, but will not rescale without a browser refresh.

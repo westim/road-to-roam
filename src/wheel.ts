@@ -2,12 +2,13 @@ import { Sprite } from 'kontra';
 import { GameState } from './gameState';
 import { createObstacle } from './obstacle';
 
-export function createCart(canvas: HTMLCanvasElement, gameState: GameState): Sprite {
-    let obj = createObstacle(canvas, gameState);
+export async function createWheel(canvas: HTMLCanvasElement, gameState: GameState): Promise<Sprite> {
+    let obj = await createObstacle(canvas, gameState, '../assets/wheel.webp');
     let sideFactor = Math.random() < 0.5 ? -1 : 1;
     obj.update = function() {
         this.dx = gameState.speed.x + sideFactor * gameState.speed.length();
-        this.dy = gameState.speed.y * 0.8;
+        this.dy = gameState.speed.y;
+        this.rotation += 3 * -sideFactor;
         this.advance();
     }
     obj.init = function() {

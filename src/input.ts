@@ -26,17 +26,18 @@ export function initInputs(gameState: GameState, gameLoop: GameLoop, canvas: HTM
 
         if (gameLoop.isStopped) {
             gameLoop.start();
-            canvas.style.background = '#057';
         }
         else {
             gameLoop.stop();
-            canvas.style.background = '#003';
+            gameLoop.context.globalAlpha= 0.5;
+            gameLoop.context.fillRect(0, 0, canvas.width, canvas.height);
             pause.render();
         }
     });
 
     onInput(['down'], () => {
         if (gameState.end) {
+            // Refresh the browser window. Restart the "hard" way :)
             location.reload();
         }
     });

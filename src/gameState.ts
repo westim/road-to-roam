@@ -8,6 +8,7 @@ export interface GameState {
     end: boolean;
     useMouse: boolean;
     spawnCounter: number;
+    textureCounter: number;
 }
 
 export let gameState: GameState = {
@@ -18,5 +19,6 @@ export let gameState: GameState = {
     end: false,
     useMouse: false,
     spawnCounter: 0,
+    textureCounter: 0,
 };
 

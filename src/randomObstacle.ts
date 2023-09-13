@@ -2,19 +2,18 @@ import { Sprite, randInt } from 'kontra';
 import { GameState } from './gameState';
 import { createObstacle } from './obstacle';
 import { createArrow } from './arrow';
-import { createCart } from './cart';
+import { createWheel } from './wheel';
 
 export async function randomObstacle(canvas: HTMLCanvasElement, gameState: GameState): Promise<Sprite> {
-    return await createObstacle(canvas, gameState);
     let weight = randInt(1, 10);
     if (weight <= 6) {
         return createObstacle(canvas, gameState);
     }
-    else if (weight <= 9) {
+    else if (weight <= 8) {
         return createArrow(canvas, gameState);
     }
     else {
-        return createCart(canvas, gameState);
+        return createWheel(canvas, gameState);
     }
 }
 

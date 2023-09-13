@@ -107,7 +107,7 @@ var song = {
                     f: []
                 },
                 {
-                    n: [120, , , , , , 115, , , 132, , , , , , , , , 118, , , , , , 113, , , 134],
+                    n: [120, , , , , , 115, , , 132, , , , , , , , , 118, , , , , , 113, , , 130],
                     f: []
                 },
                 {
@@ -115,7 +115,7 @@ var song = {
                     f: []
                 },
                 {
-                    n: [127, , , , , , 123, , , 122, , , , , , 119, , , 120, , , 115, , , 111, , , 108],
+                    n: [128, , , , , , 123, , , 122, , , , , , 119, , , 120, , , 115, , , 111, , , 108],
                     f: []
                 }
             ]
@@ -429,7 +429,7 @@ player.init(song);
 
 // Generate music...
 let ready = false;
-setInterval(function() {
+setInterval(function () {
     if (ready) {
         return;
     }
@@ -441,7 +441,14 @@ setInterval(function() {
         var wave = player.createWave();
         audio.src = URL.createObjectURL(new Blob([wave], { type: "audio/wav" }));
         audio.loop = true;
-        audio.play();
+        let playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+            })
+            .catch(error => {
+            });
+        }
     }
 }, 0);
 

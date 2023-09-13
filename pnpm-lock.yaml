@@ -37,15 +37,18 @@ devDependencies:
   roadroller:
     specifier: ^2.1.0
     version: 2.1.0
+  terser:
+    specifier: ^5.19.4
+    version: 5.19.4
   tmp:
     specifier: ^0.2.1
     version: 0.2.1
   typescript:
-    specifier: ^5.2.2
+    specifier: latest
     version: 5.2.2
   vite:
     specifier: ^4.4.9
-    version: 4.4.9
+    version: 4.4.9(terser@5.19.4)
   webpack:
     specifier: ^5.50.0
     version: 5.88.2(webpack-cli@4.10.0)
@@ -2328,7 +2331,7 @@ packages:
       he: 1.2.0
       param-case: 3.0.4
       relateurl: 0.2.7
-      terser: 5.19.3
+      terser: 5.19.4
     dev: true
 
   /html-minifier@4.0.0:
@@ -4058,12 +4061,12 @@ packages:
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.1
-      terser: 5.19.3
+      terser: 5.19.4
       webpack: 5.88.2(webpack-cli@4.10.0)
     dev: true
 
-  /terser@5.19.3:
-    resolution: {integrity: sha512-pQzJ9UJzM0IgmT4FAtYI6+VqFf0lj/to58AV0Xfgg0Up37RyPG7Al+1cepC6/BVuAxR9oNb41/DL4DEoHJvTdg==}
+  /terser@5.19.4:
+    resolution: {integrity: sha512-6p1DjHeuluwxDXcuT9VR8p64klWJKo1ILiy19s6C9+0Bh2+NWTX6nD9EPppiER4ICkHDVB1RkVpin/YW2nQn/g==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -4255,7 +4258,7 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite@4.4.9:
+  /vite@4.4.9(terser@5.19.4):
     resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -4286,6 +4289,7 @@ packages:
       esbuild: 0.18.20
       postcss: 8.4.28
       rollup: 3.28.1
+      terser: 5.19.4
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
