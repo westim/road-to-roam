@@ -1,10 +1,8 @@
 import { Sprite, SpriteSheet } from 'kontra';
-import { loadImage } from './util';
 
-export async function createFrontPlayer(canvas: HTMLCanvasElement): Promise<Sprite> {
-    let frontImg = await loadImage('../assets/front.webp');
+export function createFrontPlayer(canvas: HTMLCanvasElement, img: HTMLImageElement): Sprite {
     let frontSheet = SpriteSheet({
-        image: frontImg,
+        image: img,
         frameWidth: 90,
         frameHeight: 200,
         frameMargin: 1,
@@ -25,13 +23,12 @@ export async function createFrontPlayer(canvas: HTMLCanvasElement): Promise<Spri
     return player;
 }
 
-export async function createRightSidePlayer(canvas: HTMLCanvasElement): Promise<Sprite> {
-    let sideImg = await loadImage('../assets/rightside.webp');
+export function createRightSidePlayer(canvas: HTMLCanvasElement, img: HTMLImageElement): Sprite {
 
     // The animations don't have the same height & width, so it's easier
     // to build a separate SpriteSheet instead of 2 animations on the same sheet
     let sideSheet = SpriteSheet({
-        image: sideImg,
+        image: img,
         frameWidth: 200,
         frameHeight: 200,
         frameMargin: 1,
@@ -52,13 +49,11 @@ export async function createRightSidePlayer(canvas: HTMLCanvasElement): Promise<
     return player;
 }
 
-export async function createLeftSidePlayer(canvas: HTMLCanvasElement): Promise<Sprite> {
-    let sideImg = await loadImage('../assets/leftside.webp');
-
+export function createLeftSidePlayer(canvas: HTMLCanvasElement, img: HTMLImageElement): Sprite {
     // The animations don't have the same height & width, so it's easier
     // to build a separate SpriteSheet instead of 2 animations on the same sheet
     let sideSheet = SpriteSheet({
-        image: sideImg,
+        image: img,
         frameWidth: 200,
         frameHeight: 200,
         frameMargin: 1,

@@ -1,9 +1,7 @@
 import { Sprite, randInt } from 'kontra';
 import { GameState } from './gameState';
-import { loadImage } from './util';
 
-export async function createTexture(canvas: HTMLCanvasElement, gameState: GameState): Promise<Sprite> {
-    let img = await loadImage('../assets/texture.webp');
+export function createTexture(canvas: HTMLCanvasElement, gameState: GameState, img: HTMLImageElement): Sprite {
     let sprite = Sprite({
         image: img,
         x: randInt(-canvas.width * 0.5, canvas.width * 1.5),

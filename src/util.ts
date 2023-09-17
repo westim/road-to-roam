@@ -9,16 +9,3 @@ export function spawnTimer(score: number): number {
     return Math.random() * Math.max(0.1, (2 - score * 0.006));
 }
 
-/**
- * Wraps image loading in a Promise.
- * @param src path to image
- * @returns 
- */
-export function loadImage(src: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-        let img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = src;
-    });
-}

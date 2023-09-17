@@ -1,4 +1,4 @@
-import { init, Sprite, GameLoop, track, getCanvas, collides } from 'kontra';
+import { init, Sprite, GameLoop, track, getCanvas, collides, setImagePath, load, imageAssets } from 'kontra';
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
@@ -14,35 +14,36 @@ import { randomObstacle } from './randomObstacle';
 import { spawnTimer } from './util';
 import { createTexture } from './texture';
 
-(async function () {
-    let { canvas } = init();
-    ({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
+let { canvas, context } = init();
+({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
 
-    let speedScale = 0.002;
-    let scale = 5;
-    let bestScore = loadScore();
+setImagePath('../assets/');
+context.imageSmoothingEnabled = false;
+let speedScale = 0.002;
+let scale = 5;
+let bestScore = loadScore();
 
+load('arrow.webp', 'front.webp', 'heart.webp', 'leftside.webp', 'rightside.webp', 'rock1.webp', 'rock2.webp', 'texture.webp', 'tree1.webp', 'tree2.webp', 'wheel.webp').then(function() {
     createPointer(gameState, canvas);
     gameState.speed.x = canvas.width * speedScale;
     gameState.speed.y = canvas.height * speedScale;
 
-    // Top-level await makes asset loading way way less annoying
-    let frontPlayer = await createFrontPlayer(canvas);
-    let rightSidePlayer = await createRightSidePlayer(canvas);
-    let leftSidePlayer = await createLeftSidePlayer(canvas);
+    let frontPlayer = createFrontPlayer(canvas, imageAssets.front);
+    let rightSidePlayer = createRightSidePlayer(canvas, imageAssets.rightside);
+    let leftSidePlayer = createLeftSidePlayer(canvas, imageAssets.leftside);
     let player = frontPlayer;
-    let hearts = await Promise.all(Array.from({ length: gameState.life }, async () => await createHeart(canvas)));
+    let hearts = Array.from({ length: gameState.life }, () => createHeart(canvas, imageAssets.heart));
     hearts.forEach((heart, i) => heart.x = canvas.width - (i + 2) * heart.world.width);
 
     let mute = createMute(canvas, gameState, audio);
     let score = createScore(canvas, gameState, bestScore);
     let ui = [mute, score];
-    let obstacles: Sprite[] = [];
-    let textures: Sprite[] = [];
+    let obstacles = new Array<Sprite>();
+    let textures = new Array<Sprite>();
 
     let loop = GameLoop({
         blur: true,
-        update: async (dt: number) => {
+        update(dt: number) {
             pointerToDirection(gameState, player);
 
             if (gameState.direction === 0) {
@@ -85,17 +86,17 @@ import { createTexture } from './texture';
             // but it's way easier than time-based spawning and pauses correctly
             gameState.spawnCounter -= dt;
             if (gameState.spawnCounter <= 0) {
-                obstacles.push(await randomObstacle(canvas, gameState));
+                obstacles.push(randomObstacle(canvas, gameState, imageAssets));
                 gameState.spawnCounter = spawnTimer(score.value);
             }
 
             gameState.textureCounter -= dt;
             if (gameState.textureCounter <= 0) {
-                textures.push(await createTexture(canvas, gameState));
+                textures.push(createTexture(canvas, gameState, imageAssets.texture));
                 gameState.textureCounter = Math.random();
             }
         },
-        render: () => {
+        render() {
             obstacles.forEach(s => s.render());
             textures.forEach(s => s.render());
             hearts.forEach(s => s.render());
@@ -108,4 +109,4 @@ import { createTexture } from './texture';
     initInputs(gameState, loop, canvas, pause);
 
     loop.start();
-})();
+});

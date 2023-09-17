@@ -1,17 +1,7 @@
 import { Sprite, randInt } from 'kontra';
 import { GameState } from './gameState';
-import { loadImage } from './util';
 
-const images = [
-    '../assets/rock1.webp',
-    '../assets/rock2.webp',
-    '../assets/tree1.webp',
-    '../assets/tree2.webp',
-];
-
-export async function createObstacle(canvas: HTMLCanvasElement, gameState: GameState, imgPath: string = ''): Promise<Sprite> {
-    let idx = randInt(0, images.length - 1);
-    let img = await loadImage(imgPath || images[idx]);
+export function createObstacle(canvas: HTMLCanvasElement, gameState: GameState, img: HTMLImageElement): Sprite {
     let sprite = Sprite({
         image: img,
         x: randInt(-canvas.width * 0.5, canvas.width * 1.5),
