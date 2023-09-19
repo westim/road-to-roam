@@ -17,7 +17,7 @@ import { createTexture } from './texture';
 let { canvas, context } = init();
 ({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
 
-setImagePath('../assets/');
+setImagePath('./assets/');
 context.imageSmoothingEnabled = false;
 let speedScale = 0.002;
 let scale = 5;
