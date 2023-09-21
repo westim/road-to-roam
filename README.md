@@ -1,4 +1,4 @@
-# js13k: Road to Rome
+# js13k: Road to Roam
 
 This was my first-ever js13k and also my first-ever game jam!
 
