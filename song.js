@@ -441,14 +441,6 @@ setInterval(function () {
         var wave = player.createWave();
         audio.src = URL.createObjectURL(new Blob([wave], { type: "audio/wav" }));
         audio.loop = true;
-        let playPromise = audio.play();
-
-        if (playPromise !== undefined) {
-            playPromise.then(_ => {
-            })
-            .catch(error => {
-            });
-        }
     }
 }, 0);
 

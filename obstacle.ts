@@ -17,6 +17,6 @@ export function createObstacle(canvas: HTMLCanvasElement, gameState: GameState, 
             return !this.kill && this.y > -this.world.height * 2;
         }
     });
-    sprite.setScale(canvas.width * 0.0005);
+    sprite.setScale(canvas.width * 0.0015);
     return sprite;
 }

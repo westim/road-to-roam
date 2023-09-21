@@ -1,4 +1,4 @@
-const LOCAL_STORAGE_KEY = "road-to-rome-2023";
+const LOCAL_STORAGE_KEY = "rtr-2023";
 
 export function loadScore(): number {
     return parseFloat(localStorage.getItem(LOCAL_STORAGE_KEY)! ?? 0);

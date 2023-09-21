@@ -11,13 +11,11 @@ export function createScore(canvas: HTMLCanvasElement, gameState: GameState, bes
         value: 0,
         update() {
             score.value += -gameState.speed.y * 0.01;
+            score.text = `Distance: ${score.value.toFixed(1)} m`;
             if (bestScore > 0) {
                 // I want these to be on separate lines, but Kontra text doesn't work
                 // correctly with string template literals with newlines in them...
-                score.text = `Distance: ${score.value.toFixed(1)} m (Best: ${Math.max(score.value, bestScore).toFixed(1)} m)`;
-            }
-            else {
-                score.text = `Distance: ${score.value.toFixed(1)} m`;
+                score.text += ` (Best: ${Math.max(score.value, bestScore).toFixed(1)} m)`;
             }
         }
     });

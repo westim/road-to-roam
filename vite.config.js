@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import path from 'path';
 import fs from 'fs/promises';
+import kontra from 'rollup-plugin-kontra';
 import { Packer } from 'roadroller';
 import CleanCSS from 'clean-css';
 import { statSync } from 'fs';
@@ -9,17 +10,11 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import ect from 'ect-bin';
 
 const htmlMinify = require('html-minifier');
-const tmp = require('tmp');
 
 export default defineConfig(({ command }) => {
     const config = {
         server: {
             port: 3000,
-        },
-        resolve: {
-            alias: {
-                '@': path.resolve(__dirname, './src'),
-            }
         },
         plugins: undefined
     };
@@ -43,7 +38,6 @@ export default defineConfig(({ command }) => {
                 }
             },
             modulePreload: { polyfill: false },
-            assetsInlineLimit: 800,
             assetsDir: '',
             rollupOptions: {
                 output: {
@@ -53,7 +47,7 @@ export default defineConfig(({ command }) => {
                 },
             }
         };
-        config.plugins = [roadrollerPlugin(), staticCopyPlugin()];
+        config.plugins = [kontraPlugin(), roadrollerPlugin(), staticCopyPlugin(), ectPlugin()];
     }
 
     return config;
@@ -63,10 +57,36 @@ function staticCopyPlugin() {
     return viteStaticCopy({
         targets: [
             {
-                src: './src/assets/*',
-                dest: './assets/',
+                src: './*.webp',
+                dest: './',
             }
         ]
+    });
+}
+
+function kontraPlugin() {
+    return kontra({
+        gameObject: {
+            rotation: true,
+            anchor: true,
+            scale: true,
+            ttl: true,
+            velocity: true,
+        },
+        sprite: {
+            animation: true,
+            image: true,
+        },
+        text: {
+            newline: true,
+            align: true,
+            stroke: true,
+        },
+        vector: {
+            length: true,
+            normalize: true,
+            scale: true,
+        },
     });
 }
 
@@ -121,7 +141,7 @@ function roadrollerPlugin() {
  * @returns The transformed HTML with the JavaScript embedded.
  */
 async function embedJs(html, chunk) {
-    const scriptTagRemoved = html.replace(new RegExp(`<script[^>]*?src=[\./]*${chunk.fileName}[^>]*?></script>`), '');
+    const scriptTagRemoved = html.replace(new RegExp(`<script[^>]*?src=[\./]*${chunk.fileName}[^>]*? type="module"></script>`), '');
     const htmlInJs = `document.write('${scriptTagRemoved}');` + chunk.code.trim();
 
     const inputs = [
@@ -171,20 +191,23 @@ function embedCss(html, asset) {
 function ectPlugin() {
     return {
         name: 'vite:ect',
-        writeBundle: async () => {
-            try {
-                const files = await fs.readdir('dist/');
-                const assetFiles = files.filter(file => {
-                    return !file.includes('.js') && !file.includes('.css') && !file.includes('.html') && !file.includes('.zip') && file !== 'assets';
-                }).map(file => 'dist/' + file);
-                const args = ['-strip', '-zip', '-10009', 'dist/index.html', ...assetFiles];
-                const result = execFileSync(ect, args);
-                console.log('ECT result', result.toString().trim());
-                const stats = statSync('dist/index.zip');
-                console.log('ZIP size', stats.size);
-            } catch (err) {
-                console.log('ECT error', err);
-            }
-        },
+        writeBundle: {
+            sequential: true,
+            async handler() {
+                try {
+                    const files = await fs.readdir('dist/', { recursive: true });
+                    const assetFiles = files.filter(file => {
+                        return !file.includes('.js') && !file.includes('.css') && !file.includes('.html') && !file.includes('.zip') && file !== 'assets';
+                    }).map(file => path.join('dist', file));
+                    const args = ['-strip', '-zip', '-10009', 'dist/index.html', ...assetFiles];
+                    const result = execFileSync(ect, args);
+                    console.log('ECT result', result.toString().trim());
+                    const stats = statSync('dist/index.zip');
+                    console.log('ZIP size', stats.size);
+                } catch (err) {
+                    console.log('ECT error', err);
+                }
+            },
+        }
     };
 }

@@ -7,7 +7,7 @@ import { createWheel } from './wheel';
 export function randomObstacle(canvas: HTMLCanvasElement, gameState: GameState, assets: {[name: string]: HTMLImageElement}): Sprite {
     let weight = randInt(1, 10);
     if (weight <= 6) {
-        let randomImage = ['rock1', 'rock2', 'tree1', 'tree2'][randInt(0, 3)];
+        let randomImage = ['rock1', 'tree1'][randInt(0, 1)];
         return createObstacle(canvas, gameState, assets[randomImage]);
     }
     else if (weight <= 8) {

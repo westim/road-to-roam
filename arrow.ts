@@ -9,5 +9,6 @@ export function createArrow(canvas: HTMLCanvasElement, gameState: GameState, img
         this.dy = gameState.speed.y - gameState.speed.length();
         this.advance();
     }
+    obj.setScale(canvas.height * 0.001);
     return obj;
 }

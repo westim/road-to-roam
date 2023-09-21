@@ -15,7 +15,7 @@ export let gameState: GameState = {
     direction: 0,
     speed: Vector(0, 1),
     life: 3,
-    muted: false,
+    muted: true,
     end: false,
     useMouse: false,
     spawnCounter: 0,

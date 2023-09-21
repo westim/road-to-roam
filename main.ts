@@ -1,4 +1,4 @@
-import { init, Sprite, GameLoop, track, getCanvas, collides, setImagePath, load, imageAssets } from 'kontra';
+import { init, Sprite, GameLoop, track, getCanvas, collides, load, imageAssets } from 'kontra';
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
@@ -17,20 +17,19 @@ import { createTexture } from './texture';
 let { canvas, context } = init();
 ({ clientWidth: canvas.width, clientHeight: canvas.height } = getCanvas() as HTMLCanvasElement);
 
-setImagePath('./assets/');
 context.imageSmoothingEnabled = false;
 let speedScale = 0.002;
 let scale = 5;
 let bestScore = loadScore();
 
-load('arrow.webp', 'front.webp', 'heart.webp', 'leftside.webp', 'rightside.webp', 'rock1.webp', 'rock2.webp', 'texture.webp', 'tree1.webp', 'tree2.webp', 'wheel.webp').then(function() {
+load('arrow.webp', 'front.webp', 'heart.webp', 'rightside.webp', 'rock1.webp', 'texture.webp', 'tree1.webp', 'wheel.webp').then(function() {
     createPointer(gameState, canvas);
     gameState.speed.x = canvas.width * speedScale;
     gameState.speed.y = canvas.height * speedScale;
 
     let frontPlayer = createFrontPlayer(canvas, imageAssets.front);
     let rightSidePlayer = createRightSidePlayer(canvas, imageAssets.rightside);
-    let leftSidePlayer = createLeftSidePlayer(canvas, imageAssets.leftside);
+    let leftSidePlayer = createLeftSidePlayer(canvas, imageAssets.rightside);
     let player = frontPlayer;
     let hearts = Array.from({ length: gameState.life }, () => createHeart(canvas, imageAssets.heart));
     hearts.forEach((heart, i) => heart.x = canvas.width - (i + 2) * heart.world.width);
