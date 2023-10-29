@@ -1,4 +1,4 @@
-import { init, Sprite, GameLoop, track, getCanvas, collides, load, imageAssets } from 'kontra';
+import { init, Sprite, GameLoop, track, getCanvas, collides, load, imageAssets, setImagePath } from 'kontra';
 import { gameState } from './gameState';
 import { createPause } from './pause';
 import { initInputs } from './input';
@@ -21,6 +21,7 @@ context.imageSmoothingEnabled = false;
 let speedScale = 0.002;
 let scale = 5;
 let bestScore = loadScore();
+setImagePath('./assets/');
 
 load('arrow.webp', 'front.webp', 'heart.webp', 'rightside.webp', 'rock1.webp', 'texture.webp', 'tree1.webp', 'wheel.webp').then(function() {
     createPointer(gameState, canvas);

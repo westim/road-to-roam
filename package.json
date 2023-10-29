@@ -10,8 +10,7 @@
     "build": "cross-env LEVEL_2_BUILD=true vite build",
     "build:roadroller": "cross-env USE_RR_CONFIG=true vite build",
     "roadroller": "node find-best-roadroller.js",
-    "lint": "eslint --ext .js --ignore-path .gitignore src",
-    "vite": "vite serve"
+    "lint": "eslint --ignore-path .gitignore src"
   },
   "dependencies": {
     "kontra": "^9.0.0"
@@ -20,7 +19,6 @@
     "clean-css": "^5.3.1",
     "copy-webpack-plugin": "^9.0.1",
     "cross-env": "^7.0.3",
-    "ect-bin": "1.4.1",
     "eslint": "^8.34.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "html-minifier": "^4.0.0",

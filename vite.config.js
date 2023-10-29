@@ -7,7 +7,6 @@ import CleanCSS from 'clean-css';
 import { statSync } from 'fs';
 const { execFileSync } = require('child_process');
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import ect from 'ect-bin';
 
 const htmlMinify = require('html-minifier');
 
@@ -57,8 +56,8 @@ function staticCopyPlugin() {
     return viteStaticCopy({
         targets: [
             {
-                src: './*.webp',
-                dest: './',
+                src: './assets/*.webp',
+                dest: './assets',
             }
         ]
     });
@@ -196,11 +195,8 @@ function ectPlugin() {
             async handler() {
                 try {
                     const files = await fs.readdir('dist/', { recursive: true });
-                    const assetFiles = files.filter(file => {
-                        return !file.includes('.js') && !file.includes('.css') && !file.includes('.html') && !file.includes('.zip') && file !== 'assets';
-                    }).map(file => path.join('dist', file));
-                    const args = ['-strip', '-zip', '-10009', 'dist/index.html', ...assetFiles];
-                    const result = execFileSync(ect, args);
+                    const args = ['-strip', '-zip', '-10009', 'dist/index.html', 'dist/assets/'];
+                    const result = execFileSync('./ect.exe', args);
                     console.log('ECT result', result.toString().trim());
                     const stats = statSync('dist/index.zip');
                     console.log('ZIP size', stats.size);
